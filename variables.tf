@@ -31,3 +31,9 @@ variable "db_user_password" {
   type        = string
   sensitive   = true
 }
+
+# Database Name
+variable "db_name" {
+  description = "Database name for WordPress"
+  type        = string
+}
