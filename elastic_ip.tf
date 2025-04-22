@@ -7,7 +7,7 @@ resource "aws_eip" "nat_eip" {
 }
 
 resource "aws_eip" "bastion_eip" {
-  vpc = true
+  domain = "vpc"
   tags = {
     Name = "bastion-eip"
   }
