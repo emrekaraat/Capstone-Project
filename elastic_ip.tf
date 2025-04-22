@@ -5,3 +5,10 @@ resource "aws_eip" "nat_eip" {
     Name = "capstone-nat-eip"
   }
 }
+
+resource "aws_eip" "bastion_eip" {
+  vpc = true
+  tags = {
+    Name = "bastion-eip"
+  }
+}
