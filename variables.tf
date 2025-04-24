@@ -32,8 +32,8 @@ variable "db_user_password" {
   sensitive   = true
 }
 
-# Database Name
+# Name of the WordPress database is defined in the Terraform Cloud workspace variables section.
 variable "db_name" {
-  description = "Database name for WordPress"
+  description = "Name of the WordPress database"
   type        = string
 }
