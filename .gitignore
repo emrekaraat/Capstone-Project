@@ -41,3 +41,6 @@ connect_to_private_ec2.sh
 
 # Private key files
 *.pem
+
+merge_files_to_text.py
+project_files_dump.txt
