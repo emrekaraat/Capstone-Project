@@ -1,14 +1,17 @@
-output "ec2_public_ip" {
-  description = "The public IP of the EC2 instance"
-  value       = aws_instance.capstone.public_ip
+# Bastion Host Public IP
+output "bastion_public_ip" {
+  description = "Public IP of the Bastion Host"
+  value       = aws_instance.bastion.public_ip
 }
 
-output "wordpress_setup_url" {
-  description = "URL for WordPress setup"
-  value       = "http://${aws_instance.capstone.public_ip}/"
+# WordPress EC2 Private IP
+output "wordpress_private_ip" {
+  description = "Private IP of the WordPress EC2"
+  value       = aws_instance.capstone.private_ip
 }
 
-output "php_info_url" {
-  description = "URL to check PHP info page"
-  value       = "http://${aws_instance.capstone.public_ip}/info.php"
+# RDS Endpoint
+output "rds_endpoint" {
+  description = "RDS Endpoint"
+  value       = aws_db_instance.capstone_rds.endpoint
 }
