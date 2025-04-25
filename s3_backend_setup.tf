@@ -1,6 +1,6 @@
 # S3 Bucket for Terraform state
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = "capstone-terraform-state-bucket"
+  bucket = "capstone-terraform-emre-3501"
 
   tags = {
     Name        = "Capstone Terraform State"
