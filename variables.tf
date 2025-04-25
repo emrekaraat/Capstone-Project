@@ -37,3 +37,4 @@ variable "db_name" {
   description = "Name of the WordPress database"
   type        = string
 }
+
