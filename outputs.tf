@@ -10,8 +10,8 @@ output "wordpress_private_ip" {
   value       = aws_instance.capstone.private_ip
 }
 
-# RDS Endpoint
+# RDS Database Endpoint
 output "rds_endpoint" {
-  description = "RDS Endpoint"
+  description = "RDS Database Endpoint"
   value       = aws_db_instance.capstone_rds.endpoint
 }
