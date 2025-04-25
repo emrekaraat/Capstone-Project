@@ -1,7 +1,7 @@
 # Bastion Host Public IP
 output "bastion_public_ip" {
   description = "Public IP of the Bastion Host"
-  value       = aws_instance.bastion_host.public_ip
+  value       = aws_instance.bastion.public_ip
 }
 
 # WordPress EC2 Private IP
@@ -25,7 +25,7 @@ output "php_info_url_localhost" {
 # phpinfo URL - via Bastion Public IP
 output "php_info_url_bastion" {
   description = "phpinfo page via Bastion public IP"
-  value       = "http://${aws_instance.bastion_host.public_ip}/info.php"
+  value       = "http://${aws_instance.bastion.public_ip}/info.php"
 }
 
 # WordPress Setup URL - via localhost (tunnel)
@@ -37,5 +37,5 @@ output "wordpress_setup_url_localhost" {
 # WordPress Setup URL - via Bastion Public IP
 output "wordpress_setup_url_bastion" {
   description = "WordPress setup page via Bastion public IP"
-  value       = "http://${aws_instance.bastion_host.public_ip}"
+  value       = "http://${aws_instance.bastion.public_ip}"
 }
