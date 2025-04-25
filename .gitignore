@@ -44,3 +44,6 @@ connect_to_private_ec2.sh
 
 merge_files_to_text.py
 project_files_dump.txt
+labsuser.pem
+proje_guncel_plan.xlsx
+
