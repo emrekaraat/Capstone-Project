@@ -1,4 +1,4 @@
-resource "aws_instance" "capstone" {
+resource "aws_instance" "wordpress" {
   ami                         = var.ami_id
   instance_type               = var.instance_type
   subnet_id                   = aws_subnet.capstone_private_1.id
@@ -15,6 +15,6 @@ resource "aws_instance" "capstone" {
   })
 
   tags = {
-    Name = "capstone-ec2"
+    Name = "capstone-wordpress"
   }
 }
