@@ -1,6 +1,7 @@
 # S3 Bucket for Terraform state
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = "capstone-terraform-emre-3501"
+  bucket              = "capstone-terraform-emre-3501"
+  object_lock_enabled = false  # Object lock'u devre dışı bırakıyoruz
 
   tags = {
     Name        = "Capstone Terraform State"
