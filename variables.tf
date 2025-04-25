@@ -38,10 +38,3 @@ variable "db_name" {
   description = "Name of the WordPress database"
   type        = string
 }
-
-# RDS endpoint to be used in WordPress configuration
-# This variable's value is defined in the Terraform Cloud workspace
-variable "db_host" {
-  description = "RDS endpoint to be used in WordPress config"
-  type        = string
-}
