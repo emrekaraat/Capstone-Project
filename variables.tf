@@ -38,3 +38,8 @@ variable "db_name" {
   type        = string
 }
 
+variable "notification_email" {
+  description = "The email address to receive SNS notifications"
+  type        = string
+}
+
