@@ -2,7 +2,10 @@
 resource "aws_lb" "capstone_alb" {
   name               = "capstone-alb"
   load_balancer_type = "application"
-  subnets            = [aws_subnet.capstone_public.id]
+  subnets            = [
+    aws_subnet.capstone_public_1.id,
+    aws_subnet.capstone_public_2.id
+  ]
   security_groups    = [aws_security_group.capstone_sg.id]
 
   tags = {
