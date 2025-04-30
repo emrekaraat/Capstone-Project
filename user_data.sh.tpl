@@ -49,36 +49,4 @@ systemctl restart httpd
 # 9. PHP info test page
 echo "<?php phpinfo(); ?>" > /var/www/html/info.php
 
-# 10. Install CloudWatch Agent
-yum install -y amazon-cloudwatch-agent
-
-# 11. Create CloudWatch Agent config file
-cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<EOF
-{
-  "logs": {
-    "logs_collected": {
-      "files": {
-        "collect_list": [
-          {
-            "file_path": "/var/log/httpd/access_log",
-            "log_group_name": "/capstone/apache-access",
-            "log_stream_name": "{instance_id}"
-          },
-          {
-            "file_path": "/var/log/httpd/error_log",
-            "log_group_name": "/capstone/apache-error",
-            "log_stream_name": "{instance_id}"
-          }
-        ]
-      }
-    }
-  }
-}
-EOF
-
-# 12. Start CloudWatch Agent
-/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
-  -a fetch-config \
-  -m ec2 \
-  -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json \
-  -s
+# CloudWatch Agent was disabled due to IAM restrictions in the current environment
