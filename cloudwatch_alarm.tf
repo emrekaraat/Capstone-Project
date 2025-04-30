@@ -7,14 +7,14 @@ resource "aws_cloudwatch_metric_alarm" "cpu_high_alarm" {
   period              = 30
   statistic           = "Average"
   threshold           = 70
-  alarm_description   = "This metric monitors if CPU usage exceeds 70%."
-  
+  alarm_description   = "This metric monitors if average CPU across the Auto Scaling Group exceeds 70%."
+
   alarm_actions = [
     aws_autoscaling_policy.scale_out_policy.arn,
     aws_sns_topic.capstone_alarm_topic.arn
   ]
 
   dimensions = {
-    InstanceId = aws_instance.capstone.id
+    AutoScalingGroupName = aws_autoscaling_group.capstone_asg.name
   }
 }
