@@ -20,6 +20,7 @@ This project provisions a fully functional, scalable WordPress environment on AW
 - 📈 **Monitoring**:
   - CloudWatch Alarm on CPU Utilization
   - SNS Email notifications
+  - Log groups were not activated during testing due to EC2 launch limits (Vocareum’s ASG max size is 6)
 - 📦 **Automation**:
   - Auto Scaling (scale-out on high CPU, scale-in after cooldown)
   - Complete infrastructure deployment using Terraform
@@ -51,16 +52,8 @@ CloudWatch CPU alarm triggers an SNS email notification when usage is high.
 
 ---
 
-## ⚠️ Important Note
-
-This project is built and tested on an AWS sandbox environment (Vocareum) with limited IAM permissions.  
-Therefore, IAM Role and CloudWatch Log Group resources are intentionally excluded to avoid deployment errors.  
-They can be added manually in a full-permission AWS environment.
-
----
-
 ## 📚 Reference
 
-Terraform AWS Security Group Resource (updated structure):  
+Terraform AWS Security Group Resource (latest structure):  
 🔗 https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group  
-(*Note: Your current SG structure is acceptable, but in the future you can consider using `aws_vpc_security_group_ingress_rule` and `egress_rule` for modular control.*)
+(*I am currently using inline security group rules, but in future iterations I may switch to `aws_vpc_security_group_ingress_rule` and `egress_rule` resources for better modularity and separation of concerns.*)
