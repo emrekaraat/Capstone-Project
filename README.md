@@ -14,7 +14,7 @@ This project provisions a fully functional, scalable WordPress environment on AW
 - 🚀 **Compute**:
   - Bastion Host (public subnet)
   - EC2 Instances (private subnet) via Auto Scaling Group
-  - Launch Template with user_data for WordPress installation
+  - Launch Template with `user_data` for WordPress installation
 - 🗄️ **Database**: RDS MariaDB in private subnet.
 - 🌐 **Load Balancer**: Application Load Balancer (ALB) forwarding HTTP to EC2.
 - 📈 **Monitoring**:
@@ -56,3 +56,11 @@ CloudWatch CPU alarm triggers an SNS email notification when usage is high.
 This project is built and tested on an AWS sandbox environment (Vocareum) with limited IAM permissions.  
 Therefore, IAM Role and CloudWatch Log Group resources are intentionally excluded to avoid deployment errors.  
 They can be added manually in a full-permission AWS environment.
+
+---
+
+## 📚 Reference
+
+Terraform AWS Security Group Resource (updated structure):  
+🔗 https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group  
+(*Note: Your current SG structure is acceptable, but in the future you can consider using `aws_vpc_security_group_ingress_rule` and `egress_rule` for modular control.*)
