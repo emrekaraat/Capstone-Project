@@ -32,7 +32,7 @@ resource "aws_launch_template" "capstone_launch_template" {
 # ----------------------------------------
 resource "aws_autoscaling_group" "capstone_asg" {
   name                      = "capstone-asg"                                            # Name of ASG
-  max_size                  = 10                                                        # Max number of EC2 instances
+  max_size                  = 5                                                        # Max number of EC2 instances
   min_size                  = 1                                                         # Minimum to keep running
   desired_capacity          = 1                                                         # Desired capacity at launch
   vpc_zone_identifier       = [aws_subnet.capstone_private_1.id, aws_subnet.capstone_private_2.id]  # Deploy across AZs
