@@ -16,7 +16,7 @@ This project provisions a fully functional, scalable WordPress environment on AW
   - EC2 Instances (private subnet) via Auto Scaling Group
   - Launch Template with `user_data` for WordPress installation
 - 🗄️ **Database**: RDS MariaDB in private subnet.
-- 🌐 **Load Balancer**: Application Load Balancer (ALB) forwarding HTTP to EC2.
+- 🌐 **Load Balancer**: Application Load Balancer (ALB) forwarding HTTP traffic to EC2.
 - 📈 **Monitoring**:
   - CloudWatch Alarm on CPU Utilization
   - SNS Email notifications
@@ -41,7 +41,7 @@ This project provisions a fully functional, scalable WordPress environment on AW
 
 ## 🌐 Access
 
-- **WordPress Public URL**:  
+- **WordPress Public URL** (changes each time the stack is deployed):  
   http://capstone-alb-1540634271.us-west-2.elb.amazonaws.com
 
 ---
@@ -56,4 +56,16 @@ CloudWatch CPU alarm triggers an SNS email notification when usage is high.
 
 Terraform AWS Security Group Resource (latest structure):  
 🔗 https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group  
-(*I am currently using inline security group rules, but in future iterations I may switch to `aws_vpc_security_group_ingress_rule` and `egress_rule` resources for better modularity and separation of concerns.*)
+(*I am currently using inline security group rules, but in future iterations I may switch to `aws_vpc_security_group_ingress_rule` and `egress_rule` resources for better modularity and control.*)
+
+---
+
+## 🔭 Future Work
+
+- ✅ Add WordPress customization (e.g., content, themes, and plugins)
+- ⏳ Consider enabling CloudWatch log groups for Apache/EC2 logs (requires IAM role)
+- 🔒 Add HTTPS support using AWS Certificate Manager (ACM)
+- 🌐 Use Route53 for custom domain mapping (e.g., `emrecapstone.com`)
+- 📦 Refactor to use modular Terraform structure
+- 🧪 Add S3 static content bucket (if needed for uploads or backups)
+- 📊 Enable RDS monitoring and backups
