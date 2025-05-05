@@ -10,13 +10,15 @@ This project provisions a fully functional, scalable WordPress environment on AW
 ## ✅ Key Features
 
 - 🖧 **Networking**: Custom VPC with public and private subnets across multiple AZs.
-- 🛡️ **Security**: Security Groups for Bastion, EC2, and RDS.
+- 🛡️ **Security**:
+  - Separate Security Groups for Bastion Host, RDS, ALB, and Auto Scaling EC2s
+  - Ingress/Egress rules defined based on least privilege
 - 🚀 **Compute**:
   - Bastion Host (public subnet)
   - EC2 Instances (private subnet) via Auto Scaling Group
   - Launch Template with `user_data` for WordPress installation
 - 🗄️ **Database**: RDS MariaDB in private subnet.
-- 🌐 **Load Balancer**: Application Load Balancer (ALB) forwarding HTTP traffic to EC2.
+- 🌐 **Load Balancer**: Application Load Balancer (ALB) forwarding HTTP to EC2.
 - 📈 **Monitoring**:
   - CloudWatch Alarm on CPU Utilization
   - SNS Email notifications
@@ -31,17 +33,19 @@ This project provisions a fully functional, scalable WordPress environment on AW
 
 - `main.tf`, `provider.tf`: Terraform core setup
 - `auto_scaling.tf`: ASG, Launch Template, scaling policies
+- `asg_sg.tf`: Security Group specifically for Auto Scaling EC2s ✅
 - `user_data.sh.tpl`: WordPress installation on EC2
 - `alb.tf`: ALB & target group
 - `cloudwatch_alarm.tf`: Alarm for scaling
 - `bastion_host.tf`, `connect_to_private_ec2.sh`: Bastion configuration & access
 - `rds_instance.tf`: Managed DB setup
+- `rds_security_group.tf`: Security Group for RDS
 
 ---
 
 ## 🌐 Access
 
-- **WordPress Public URL** (changes each time the stack is deployed):  
+- **WordPress Public URL**:  
   http://capstone-alb-1540634271.us-west-2.elb.amazonaws.com
 
 ---
@@ -56,16 +60,10 @@ CloudWatch CPU alarm triggers an SNS email notification when usage is high.
 
 Terraform AWS Security Group Resource (latest structure):  
 🔗 https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group  
-(*I am currently using inline security group rules, but in future iterations I may switch to `aws_vpc_security_group_ingress_rule` and `egress_rule` resources for better modularity and control.*)
+(*I am currently using inline security group rules, but in future iterations I may switch to `aws_vpc_security_group_ingress_rule` and `egress_rule` resources for better modularity and separation of concerns.*)
 
 ---
 
-## 🔭 Future Work
+## 🧩 Update Note – Dedicated SG for ASG EC2s
 
-- ✅ Add WordPress customization (e.g., content, themes, and plugins)
-- ⏳ Consider enabling CloudWatch log groups for Apache/EC2 logs (requires IAM role)
-- 🔒 Add HTTPS support using AWS Certificate Manager (ACM)
-- 🌐 Use Route53 for custom domain mapping (e.g., `emrecapstone.com`)
-- 📦 Refactor to use modular Terraform structure
-- 🧪 Add S3 static content bucket (if needed for uploads or backups)
-- 📊 Enable RDS monitoring and backups
+To improve security and modularity, a separate Security Group named `asg_sg` was created for EC2 instances launched by the Auto Scaling Group. This allows better control over RDS access and future flexibility in permissions.
