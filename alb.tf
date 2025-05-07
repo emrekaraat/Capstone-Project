@@ -26,7 +26,7 @@ resource "aws_lb_target_group" "capstone_target_group" {
     timeout             = 5         # Timeout after 5 seconds
     healthy_threshold   = 2         # Mark healthy after 2 successes
     unhealthy_threshold = 2         # Mark unhealthy after 2 failures
-    matcher             = "200"     # Expect HTTP 200 OK
+    matcher             = "200-399"     # Expect HTTP 200-399 OK
   }
 }
 
