@@ -3,67 +3,102 @@ AWS Project with WordPress as a Webserver, Auto Scaling, and ALB
 
 # Capstone AWS Project – WordPress Infrastructure
 
-This project provisions a fully functional, scalable WordPress environment on AWS using Terraform.
+This project provisions a fully functional, highly available WordPress environment on AWS using Terraform. The architecture includes secure networking, automated scaling, and modular Infrastructure as Code (IaC) practices.
 
 ---
 
 ## ✅ Key Features
 
-- 🖧 **Networking**: Custom VPC with public and private subnets across multiple AZs.
+- 🖧 **Networking**: Custom VPC with 2 public and 2 private subnets across two Availability Zones (AZs).
 - 🛡️ **Security**:
-  - Separate Security Groups for Bastion Host, RDS, ALB, and Auto Scaling EC2s
-  - Ingress/Egress rules defined based on least privilege
+  - Dedicated Security Groups for Bastion Host, ALB, RDS, and Auto Scaling EC2s
+  - Ingress/Egress rules scoped to minimum required access
 - 🚀 **Compute**:
-  - Bastion Host (public subnet)
-  - EC2 Instances (private subnet) via Auto Scaling Group
+  - Bastion Host in Public Subnet (SSH Access)
+  - EC2 Instances in Private Subnets via Auto Scaling Group
   - Launch Template with `user_data` for WordPress installation
-- 🗄️ **Database**: RDS MariaDB in private subnet.
-- 🌐 **Load Balancer**: Application Load Balancer (ALB) forwarding HTTP to EC2.
+- 🗄️ **Database**: 
+  - Amazon RDS (MariaDB) with Multi-AZ enabled for automatic failover
+  - Primary DB and Standby DB spread across private subnets in different AZs
+- 🌐 **Load Balancer**: Application Load Balancer (ALB) exposes WordPress to the internet over HTTP (Port 80).
 - 📈 **Monitoring**:
-  - CloudWatch Alarm on CPU Utilization
-  - SNS Email notifications
-  - Log groups were not activated during testing due to EC2 launch limits (Vocareum’s ASG max size is 6)
+  - Amazon CloudWatch Alarm based on EC2 CPU Utilization
+  - SNS Email notifications for scale-out events
+  - Log groups disabled during testing due to EC2 limits (Vocareum sandbox)
 - 📦 **Automation**:
-  - Auto Scaling (scale-out on high CPU, scale-in after cooldown)
-  - Complete infrastructure deployment using Terraform
+  - Auto Scaling based on CPU threshold (scale-out & scale-in)
+  - Fully automated provisioning via `terraform apply`
+- 🛡️ **Logging & Auditing**:
+  - **AWS CloudTrail** is enabled to log all API calls and user activity
+  - Logs stored securely in an S3 bucket with file integrity validation
+  - Global service events (e.g., IAM) are included
 
 ---
 
 ## 📂 File Structure
 
-- `main.tf`, `provider.tf`: Terraform core setup
-- `auto_scaling.tf`: ASG, Launch Template, scaling policies
-- `asg_sg.tf`: Security Group specifically for Auto Scaling EC2s ✅
-- `user_data.sh.tpl`: WordPress installation on EC2
-- `alb.tf`: ALB & target group
-- `cloudwatch_alarm.tf`: Alarm for scaling
-- `bastion_host.tf`, `connect_to_private_ec2.sh`: Bastion configuration & access
-- `rds_instance.tf`: Managed DB setup
-- `rds_security_group.tf`: Security Group for RDS
+- `main.tf`, `provider.tf`: Terraform provider and region setup
+- `auto_scaling.tf`: Launch Template, ASG configuration, and scaling policies
+- `asg_sg.tf`: Security Group for Auto Scaling EC2 instances ✅
+- `alb.tf`: Application Load Balancer & Target Group
+- `bastion_host.tf`, `connect_to_private_ec2.sh`: Bastion access
+- `rds_instance.tf`: RDS MariaDB setup with Multi-AZ
+- `rds_security_group.tf`: SG allowing EC2 to connect to RDS (port 3306)
+- `cloudwatch_alarm.tf`: CloudWatch alarm and SNS topic
+- `user_data.sh.tpl`: Shell script to install and configure WordPress
+- `cloudtrail.tf`: CloudTrail resource definition
+- `cloudtrail_s3.tf`: S3 bucket for CloudTrail logs
+- `iam_for_cloudtrail.tf`: IAM role and policy for CloudTrail
 
 ---
 
 ## 🌐 Access
 
-- **WordPress Public URL**:  
-  http://capstone-alb-1540634271.us-west-2.elb.amazonaws.com
+- **WordPress Public URL** (via ALB):  
+  http://capstone-alb-1540634271.us-west-2.elb.amazonaws.com  
+  (*Note: This URL may change with each Terraform deployment.*)
 
 ---
 
 ## 📬 Email Alerts
 
-CloudWatch CPU alarm triggers an SNS email notification when usage is high.
+- CloudWatch Alarm triggers when EC2 CPU > 70%
+- Email notifications sent via AWS SNS Topic
 
 ---
 
-## 📚 Reference
+## 🧠 Technical Notes
 
-Terraform AWS Security Group Resource (latest structure):  
-🔗 https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group  
-(*I am currently using inline security group rules, but in future iterations I may switch to `aws_vpc_security_group_ingress_rule` and `egress_rule` resources for better modularity and separation of concerns.*)
+- **Multi-AZ RDS:**  
+  `multi_az = true` enables high availability. AWS maintains a standby DB in another AZ. Failover happens automatically.
+  
+- **Modular Security Groups:**  
+  EC2s in ASG are now isolated via `asg_sg`, which only allows what’s necessary (e.g., access to RDS).
+
+- **ALB & EC2 Routing:**  
+  ALB routes HTTP traffic to EC2 instances behind the scenes using a target group.
+
+- **CloudTrail & Auditing:**
+  CloudTrail logs all API activity into a versioned S3 bucket, which enables you to audit and trace actions performed in your AWS account.
 
 ---
 
 ## 🧩 Update Note – Dedicated SG for ASG EC2s
 
-To improve security and modularity, a separate Security Group named `asg_sg` was created for EC2 instances launched by the Auto Scaling Group. This allows better control over RDS access and future flexibility in permissions.
+A new security group `asg_sg` was created for Auto Scaling Group instances. This improves isolation, restricts RDS access only to valid EC2s, and makes future scaling or service integration easier.
+
+---
+
+## 🛠️ Future Work
+
+- ✅ **WordPress Customization:**  
+  Add themes, plugins, and personal content (CV, portfolio, or football blog)
+
+- 🌍 **Domain & SSL:**  
+  Integrate with Route53 and ACM for HTTPS and custom domain
+
+- ☁️ **Optional Services:**
+  - Amazon S3 for media storage (not needed yet)
+  - AWS CloudFront for CDN & faster delivery
+  - CloudWatch Logs (requires IAM permission)
+  - CloudWatch Dashboard
