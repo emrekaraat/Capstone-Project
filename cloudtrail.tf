@@ -5,7 +5,6 @@ resource "aws_cloudtrail" "capstone_trail" {
   include_global_service_events = true                                              # Include global AWS services (e.g., IAM)
   is_multi_region_trail         = true                                              # Capture events across all regions
   enable_log_file_validation    = true                                              # Ensure integrity of logs
-  is_logging                    = true                                              # Start logging immediately
 
   event_selector {
     read_write_type           = "All"                                               # Log both read and write events
