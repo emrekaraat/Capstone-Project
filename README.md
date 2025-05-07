@@ -3,7 +3,7 @@ AWS Project with WordPress as a Webserver, Auto Scaling, and ALB
 
 # Capstone AWS Project – WordPress Infrastructure
 
-This project provisions a fully functional, highly available WordPress environment on AWS using Terraform. The architecture includes secure networking, automated scaling, logging, and modular Infrastructure as Code (IaC) practices.
+This project provisions a fully functional, highly available WordPress environment on AWS using Terraform. The architecture includes secure networking, automated scaling, and modular Infrastructure as Code (IaC) practices.
 
 ---
 
@@ -28,10 +28,6 @@ This project provisions a fully functional, highly available WordPress environme
 - 📦 **Automation**:
   - Auto Scaling based on CPU threshold (scale-out & scale-in)
   - Fully automated provisioning via `terraform apply`
-- 🛡️ **Logging & Auditing**:
-  - **AWS CloudTrail** is enabled to log all API calls and user activity
-  - Logs are stored securely in an S3 bucket with file integrity validation
-  - Global service events (e.g., IAM) are included
 
 ---
 
@@ -46,8 +42,6 @@ This project provisions a fully functional, highly available WordPress environme
 - `rds_security_group.tf`: SG allowing EC2 to connect to RDS (port 3306)
 - `cloudwatch_alarm.tf`: CloudWatch alarm and SNS topic
 - `user_data.sh.tpl`: Shell script to install and configure WordPress
-- `cloudtrail.tf`: CloudTrail resource definition
-- `cloudtrail_s3.tf`: S3 bucket, bucket policy, ACL, and random suffix for CloudTrail logs
 
 ---
 
@@ -77,8 +71,8 @@ This project provisions a fully functional, highly available WordPress environme
 - **ALB & EC2 Routing:**  
   ALB routes HTTP traffic to EC2 instances behind the scenes using a target group.
 
-- **CloudTrail & Auditing:**
-  CloudTrail logs all API activity into a versioned S3 bucket, enabling full visibility into actions performed in the AWS account.
+- **Note on CloudTrail & S3:**  
+  Although CloudTrail + S3 logging was planned, it was removed due to limited IAM permissions. The resources were deleted to keep the project clean and fully automated with Terraform.
 
 ---
 
