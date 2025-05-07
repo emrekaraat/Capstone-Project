@@ -3,7 +3,7 @@ AWS Project with WordPress as a Webserver, Auto Scaling, and ALB
 
 # Capstone AWS Project – WordPress Infrastructure
 
-This project provisions a fully functional, highly available WordPress environment on AWS using Terraform. The architecture includes secure networking, automated scaling, and modular Infrastructure as Code (IaC) practices.
+This project provisions a fully functional, highly available WordPress environment on AWS using Terraform. The architecture includes secure networking, automated scaling, logging, and modular Infrastructure as Code (IaC) practices.
 
 ---
 
@@ -30,7 +30,7 @@ This project provisions a fully functional, highly available WordPress environme
   - Fully automated provisioning via `terraform apply`
 - 🛡️ **Logging & Auditing**:
   - **AWS CloudTrail** is enabled to log all API calls and user activity
-  - Logs stored securely in an S3 bucket with file integrity validation
+  - Logs are stored securely in an S3 bucket with file integrity validation
   - Global service events (e.g., IAM) are included
 
 ---
@@ -47,8 +47,7 @@ This project provisions a fully functional, highly available WordPress environme
 - `cloudwatch_alarm.tf`: CloudWatch alarm and SNS topic
 - `user_data.sh.tpl`: Shell script to install and configure WordPress
 - `cloudtrail.tf`: CloudTrail resource definition
-- `cloudtrail_s3.tf`: S3 bucket for CloudTrail logs
-- `iam_for_cloudtrail.tf`: IAM role and policy for CloudTrail
+- `cloudtrail_s3.tf`: S3 bucket, bucket policy, ACL, and random suffix for CloudTrail logs
 
 ---
 
@@ -79,7 +78,7 @@ This project provisions a fully functional, highly available WordPress environme
   ALB routes HTTP traffic to EC2 instances behind the scenes using a target group.
 
 - **CloudTrail & Auditing:**
-  CloudTrail logs all API activity into a versioned S3 bucket, which enables you to audit and trace actions performed in your AWS account.
+  CloudTrail logs all API activity into a versioned S3 bucket, enabling full visibility into actions performed in the AWS account.
 
 ---
 
