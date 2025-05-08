@@ -13,7 +13,7 @@ resource "aws_instance" "capstone" {
     db_name              = var.db_name
     db_host              = aws_db_instance.capstone_rds.endpoint
     notification_email   = var.notification_email
-    galatasaray_content  = local.galatasaray_content
+    galatasaray_content  = file("${path.module}/assets/galatasaray_content.html")  # ✅ doğrudan dosyadan oku
   })
 
   tags = {
