@@ -43,12 +43,12 @@ curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.pha
 chmod +x wp-cli.phar
 mv wp-cli.phar /usr/local/bin/wp
 
-# Inject Galatasaray content
+# Inject Galatasaray content into a file
 cat <<EOF > /tmp/galatasaray_content.html
 ${galatasaray_content}
 EOF
 
-# Install WordPress and create page with content
+# Install WordPress
 cd /var/www/html
 wp core install \
   --url="http://localhost" \
@@ -59,15 +59,27 @@ wp core install \
   --skip-email \
   --allow-root
 
-# Create WordPress page with content directly
-wp post create \
-  --post_type=page \
-  --post_title="My Project" \
-  --post_status=publish \
-  --page_template=page-myproject.php \
-  --post_name="myproject" \
-  --post_content="$(</tmp/galatasaray_content.html)" \
-  --allow-root
+# Wait a few seconds to ensure DB sync
+sleep 5
+
+# Check if page exists and update or create
+page_id=$(wp post list --post_type=page --name="myproject" --field=ID --allow-root)
+if [ -z "$page_id" ]; then
+  echo "🆕 Creating page 'myproject'"
+  wp post create \
+    --post_type=page \
+    --post_title="My Project" \
+    --post_status=publish \
+    --page_template=page-myproject.php \
+    --post_name="myproject" \
+    --post_content="$(</tmp/galatasaray_content.html)" \
+    --allow-root
+else
+  echo "✏️ Updating existing page 'myproject' (ID: $page_id)"
+  wp post update "$page_id" \
+    --post_content="$(</tmp/galatasaray_content.html)" \
+    --allow-root
+fi
 
 # Create phpinfo test page
 echo "<?php phpinfo(); ?>" > /var/www/html/info.php
