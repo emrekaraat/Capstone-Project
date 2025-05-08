@@ -11,12 +11,13 @@ resource "aws_launch_template" "capstone_launch_template" {
   }
 
   user_data = base64encode(templatefile("${path.module}/user_data.sh.tpl", {
-    db_root_password   = var.db_root_password
-    db_user            = var.db_user
-    db_user_password   = var.db_user_password
-    db_name            = var.db_name
-    db_host            = aws_db_instance.capstone_rds.endpoint
-    notification_email = var.notification_email         # ✅ eklendi
+    db_root_password    = var.db_root_password
+    db_user             = var.db_user
+    db_user_password    = var.db_user_password
+    db_name             = var.db_name
+    db_host             = aws_db_instance.capstone_rds.endpoint
+    notification_email  = var.notification_email
+    galatasaray_content = file("${path.module}/assets/galatasaray_content.html")  # ✅ eksik olan eklendi
   }))
 }
 
