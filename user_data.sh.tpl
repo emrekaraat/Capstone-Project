@@ -63,13 +63,16 @@ wp post create \
   --post_name="myproject" \
   --allow-root
 
-# Inject Galatasaray content (escape Bash inside Terraform)
+# Inject Galatasaray content
 cat <<EOF > /tmp/galatasaray_content.html
 ${galatasaray_content}
 EOF
 
-page_id=\$(wp post list --post_type=page --name="myproject" --field=ID --allow-root)
-wp post update "\$page_id" --post_content="\$(cat /tmp/galatasaray_content.html)" --allow-root
+# Wait to ensure the page is created before updating
+sleep 10
+
+page_id=$(wp post list --post_type=page --name="myproject" --field=ID --allow-root)
+wp post update "$page_id" --post_content="$(cat /tmp/galatasaray_content.html)" --allow-root
 
 # Create phpinfo test page
 echo "<?php phpinfo(); ?>" > /var/www/html/info.php
