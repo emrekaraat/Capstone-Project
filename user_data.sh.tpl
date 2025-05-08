@@ -59,10 +59,10 @@ wp core install \
   --skip-email \
   --allow-root
 
-# Wait a few seconds to ensure DB sync
+# Wait briefly
 sleep 5
 
-# Check if page exists and update or create
+# Create or update WordPress page with Galatasaray content
 page_id=$(wp post list --post_type=page --name="myproject" --field=ID --allow-root)
 if [ -z "$page_id" ]; then
   echo "🆕 Creating page 'myproject'"
