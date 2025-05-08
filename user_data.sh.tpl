@@ -63,16 +63,25 @@ wp post create \
   --post_name="myproject" \
   --allow-root
 
-# Inject Galatasaray content
+# Inject Galatasaray content using retry mechanism
 cat <<EOF > /tmp/galatasaray_content.html
 ${galatasaray_content}
 EOF
 
-# Wait to ensure the page is created before updating
-sleep 10
+for i in {1..6}; do
+  echo "⏳ Waiting for WordPress to finish setup (attempt $i)..."
+  page_id=$(wp post list --post_type=page --name="myproject" --field=ID --allow-root)
+  if [ -n "$page_id" ]; then
+    echo "✅ Page found. Updating content..."
+    wp post update "$page_id" --post_content="$(</tmp/galatasaray_content.html)" --allow-root
+    exit 0
+  else
+    echo "❌ Page not found. Retrying in 10 seconds..."
+    sleep 10
+  fi
+done
 
-page_id=$(wp post list --post_type=page --name="myproject" --field=ID --allow-root)
-wp post update "$page_id" --post_content="$(cat /tmp/galatasaray_content.html)" --allow-root
+echo "❌ Failed to update page content after multiple attempts."
 
 # Create phpinfo test page
 echo "<?php phpinfo(); ?>" > /var/www/html/info.php
