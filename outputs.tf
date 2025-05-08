@@ -15,3 +15,9 @@ output "rds_endpoint" {
   description = "RDS Database Endpoint"
   value       = aws_db_instance.capstone_rds.endpoint
 }
+
+# ALB DNS Name
+output "alb_dns" {
+  description = "DNS name of the Application Load Balancer"
+  value       = aws_lb.capstone_alb.dns_name
+}

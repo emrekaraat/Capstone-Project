@@ -1,56 +1,94 @@
 #!/bin/bash
 
+# [System Update] Update all installed packages
 echo "[Start] Updating system packages"
-yum update -y                                # Update all installed system packages
+yum update -y
 
-echo "[Step 1] Installing Apache (httpd)"
-yum install -y httpd                         # Install Apache web server
-systemctl start httpd                        # Start Apache service
-systemctl enable httpd                       # Enable Apache to start on boot
+# [Web Server] Install and start Apache
+echo "[Step 1] Installing Apache"
+yum install -y httpd
+systemctl start httpd
+systemctl enable httpd
 
-echo "[Step 2] Installing PHP and required extensions"
-amazon-linux-extras enable php8.2           # Enable PHP 8.2 from Amazon Linux Extras
-yum clean metadata                          # Clean YUM metadata
-yum install -y php php-mysqlnd php-fpm php-xml php-mbstring  # Install PHP and modules
+# [PHP] Enable PHP 8.2 and install necessary extensions
+echo "[Step 2] Installing PHP and extensions"
+amazon-linux-extras enable php8.2
+yum clean metadata
+yum install -y php php-mysqlnd php-fpm php-xml php-mbstring php-cli unzip
 
-echo "[Step 3] Installing MariaDB locally (optional)"
-yum install -y mariadb105-server             # Install MariaDB (optional local DB for testing)
-systemctl start mariadb                      # Start MariaDB
-systemctl enable mariadb                     # Enable MariaDB to start on boot
+# [WordPress] Download and install WordPress
+echo "[Step 3] Installing WordPress"
+cd /var/www/html
+wget https://wordpress.org/latest.tar.gz
+tar -xzf latest.tar.gz
+cp -r wordpress/* .
+rm -rf wordpress latest.tar.gz
 
-echo "[Step 4] Configuring local test DB"
-mysql -u root <<EOF                          # Configure a test DB and user credentials
-ALTER USER 'root'@'localhost' IDENTIFIED BY "${db_root_password}";
-CREATE DATABASE local_test_db;
-CREATE USER '${db_user}'@'localhost' IDENTIFIED BY "${db_user_password}";
-GRANT ALL PRIVILEGES ON local_test_db.* TO '${db_user}'@'localhost';
-FLUSH PRIVILEGES;
-EOF
+# [Config] Create wp-config.php and set DB credentials
+echo "[Step 4] Configuring wp-config.php"
+cp wp-config-sample.php wp-config.php
+sed -i "s/database_name_here/${db_name}/" wp-config.php
+sed -i "s/username_here/${db_user}/" wp-config.php
+sed -i "s/password_here/${db_user_password}/" wp-config.php
+sed -i "s/localhost/${db_host}/" wp-config.php
 
-echo "[Step 5] Downloading and installing WordPress"
-cd /var/www/html                             # Navigate to web root
-wget https://wordpress.org/latest.tar.gz     # Download latest WordPress
-tar -xzf latest.tar.gz                       # Extract archive
-cp -r wordpress/* .                          # Move files to web root
-rm -rf wordpress latest.tar.gz               # Clean up
+# [Permissions] Set ownership and restart Apache
+echo "[Step 5] Setting permissions"
+chown -R apache:apache /var/www/html
+chmod -R 755 /var/www/html
+systemctl restart httpd
 
-echo "[Step 6] Configuring wp-config.php"
-cp wp-config-sample.php wp-config.php        # Copy sample config
-sed -i "s/database_name_here/${db_name}/" wp-config.php      # Set DB name
-sed -i "s/username_here/${db_user}/" wp-config.php           # Set DB user
-sed -i "s/password_here/${db_user_password}/" wp-config.php  # Set DB password
-sed -i "s/localhost/${db_host}/" wp-config.php               # Set DB host (usually RDS)
+# [Custom Theme] Clone theme and template files from GitHub
+echo "[Step 6] Cloning WordPress content"
+yum install -y git
+git clone https://github.com/emrekaraat/wordpress-content.git /tmp/wp-content
+cp -r /tmp/wp-content/* /var/www/html/
+chown -R apache:apache /var/www/html/
+chmod -R 755 /var/www/html/
 
-echo "[Step 7] Setting permissions and restarting Apache"
-chown -R apache:apache /var/www/html         # Set ownership to Apache user
-chmod -R 755 /var/www/html                   # Set permissions
-systemctl restart httpd                      # Restart Apache to apply changes
+# [Custom Page Template] Copy custom page template to theme directory
+echo "[Step 7] Copying custom page template"
+cp /tmp/wp-content/wp-content/themes/emre-theme/page-myproject.php /var/www/html/wp-content/themes/twentytwentyfive/page-myproject.php
 
-sleep 10                                     # Give Apache time to fully start
+# [WP-CLI] Install WP-CLI for WordPress command line management
+echo "[Step 8] Installing WP-CLI"
+cd /home/ec2-user
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+chmod +x wp-cli.phar
+sudo mv wp-cli.phar /usr/local/bin/wp
 
-# ✅ Check if Apache is responding (important for ALB health checks)
-curl -s http://localhost > /dev/null && echo "[HealthCheck] Apache is responding." || echo "[HealthCheck] Apache not responding!"
+# [Install WordPress] Using WP-CLI
+echo "[Step 9] Installing WordPress via WP-CLI"
+cd /var/www/html
+wp core install \
+  --url="http://localhost" \
+  --title="Capstone Project" \
+  --admin_user=admin \
+  --admin_password=Test987# \
+  --admin_email="${notification_email}" \
+  --skip-email \
+  --allow-root
 
-echo "<?php phpinfo(); ?>" > /var/www/html/info.php  # Add test PHP info page
+# [Create Page] Create initial 'My Project' page
+echo "[Step 10] Creating initial placeholder page"
+wp post create \
+  --post_type=page \
+  --post_title="My Project" \
+  --post_status=publish \
+  --page_template=page-myproject.php \
+  --post_name="myproject" \
+  --allow-root
 
-# ℹ️ CloudWatch Agent was disabled due to IAM restrictions
+# [Inject Galatasaray Content] Pull content from GitHub and update the page
+echo "[Step 11] Fetching Galatasaray HTML content"
+curl -o /tmp/galatasaray_content.html https://raw.githubusercontent.com/emrekaraat/galatasaray/main/galatasaray_content.html
+
+page_id=$(wp post list --post_type=page --name="myproject" --field=ID --allow-root)
+wp post update "$page_id" --post_content="$(cat /tmp/galatasaray_content.html)" --allow-root
+
+# [Health Check] Confirm Apache is running
+echo "[HealthCheck] Verifying Apache"
+curl -s http://localhost > /dev/null && echo "Apache is responding." || echo "Apache not responding!"
+
+# [Debug Page] Create phpinfo test page
+echo "<?php phpinfo(); ?>" > /var/www/html/info.php
