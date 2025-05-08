@@ -7,3 +7,7 @@ terraform {
   }
 }
 
+# Read the Galatasaray HTML content from file
+locals {
+  galatasaray_content = file("${path.module}/assets/galatasaray_content.html")
+}
