@@ -32,13 +32,12 @@ chown -R apache:apache /var/www/html
 chmod -R 755 /var/www/html
 systemctl restart httpd
 
-# Clone and copy theme
-git clone https://github.com/emrekaraat/wordpress-content.git /tmp/wp-content
-cp -r /tmp/wp-content/* /var/www/html/
-cp /tmp/wp-content/wp-content/themes/emre-theme/page-myproject.php /var/www/html/wp-content/themes/twentytwentyfive/page-myproject.php
+# Clone GitHub repo and copy wp-content
+cd /home/ec2-user
+git clone https://github.com/emrekaraat/capstone-project.git
+cp -r capstone-project/assets/wordpress-content/wp-content /var/www/html/
 
 # Install WP-CLI
-cd /home/ec2-user
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 chmod +x wp-cli.phar
 mv wp-cli.phar /usr/local/bin/wp

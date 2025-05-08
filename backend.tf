@@ -3,7 +3,7 @@ terraform {
     organization = "AWS-Cloud-Emre"
 
     workspaces {
-      name = "capstone-cli"
+      name = "AWS-Capstone-Project"
     }
   }
 }
