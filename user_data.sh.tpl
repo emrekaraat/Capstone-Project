@@ -54,7 +54,7 @@ wp core install \
   --skip-email \
   --allow-root
 
-# Create page
+# Create the page
 wp post create \
   --post_type=page \
   --post_title="My Project" \
@@ -63,10 +63,13 @@ wp post create \
   --post_name="myproject" \
   --allow-root
 
-# Inject Galatasaray content
-echo "${galatasaray_content}" > /tmp/galatasaray_content.html
-page_id=$(wp post list --post_type=page --name="myproject" --field=ID --allow-root)
-wp post update "$page_id" --post_content="$(cat /tmp/galatasaray_content.html)" --allow-root
+# Inject Galatasaray content (escape Bash inside Terraform)
+cat <<EOF > /tmp/galatasaray_content.html
+${galatasaray_content}
+EOF
 
-# Create phpinfo
+page_id=\$(wp post list --post_type=page --name="myproject" --field=ID --allow-root)
+wp post update "\$page_id" --post_content="\$(cat /tmp/galatasaray_content.html)" --allow-root
+
+# Create phpinfo test page
 echo "<?php phpinfo(); ?>" > /var/www/html/info.php
