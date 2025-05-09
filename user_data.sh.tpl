@@ -43,8 +43,9 @@ cp /home/ec2-user/capstone-project/assets/wordpress-content/wp-content/themes/em
 mkdir -p /var/www/html/wp-content/themes/twentytwentyfive/images
 cp /home/ec2-user/capstone-project/assets/wordpress-content/wp-content/themes/emre-theme/images/*.jpg /var/www/html/wp-content/themes/twentytwentyfive/images/
 
-# Check if images exist
-ls -lh /var/www/html/wp-content/themes/twentytwentyfive/images/ > /tmp/image_check.txt
+# Set permissions for images
+chown -R apache:apache /var/www/html/wp-content/themes/twentytwentyfive/images
+chmod -R 755 /var/www/html/wp-content/themes/twentytwentyfive/images
 
 # Install WP-CLI
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
