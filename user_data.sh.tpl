@@ -36,13 +36,15 @@ systemctl restart httpd
 cd /home/ec2-user
 git clone https://github.com/emrekaraat/capstone-project.git
 
-# Copy page-myproject.php and images to active theme (twentytwentyfive)
+# Copy page template
 cp /home/ec2-user/capstone-project/assets/wordpress-content/wp-content/themes/emre-theme/page-myproject.php /var/www/html/wp-content/themes/twentytwentyfive/
-cp -r /home/ec2-user/capstone-project/assets/wordpress-content/wp-content/themes/emre-theme/images /var/www/html/wp-content/themes/twentytwentyfive/
 
-# ✅ Fix permissions for copied theme files (images and template)
-chown -R apache:apache /var/www/html/wp-content/themes/twentytwentyfive
-chmod -R 755 /var/www/html/wp-content/themes/twentytwentyfive
+# Copy images to active theme folder
+mkdir -p /var/www/html/wp-content/themes/twentytwentyfive/images
+cp /home/ec2-user/capstone-project/assets/wordpress-content/wp-content/themes/emre-theme/images/*.jpg /var/www/html/wp-content/themes/twentytwentyfive/images/
+
+# Check if images exist
+ls -lh /var/www/html/wp-content/themes/twentytwentyfive/images/ > /tmp/image_check.txt
 
 # Install WP-CLI
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
