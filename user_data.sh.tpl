@@ -40,6 +40,10 @@ git clone https://github.com/emrekaraat/capstone-project.git
 cp /home/ec2-user/capstone-project/assets/wordpress-content/wp-content/themes/emre-theme/page-myproject.php /var/www/html/wp-content/themes/twentytwentyfive/
 cp -r /home/ec2-user/capstone-project/assets/wordpress-content/wp-content/themes/emre-theme/images /var/www/html/wp-content/themes/twentytwentyfive/
 
+# ✅ Fix permissions for copied theme files (images and template)
+chown -R apache:apache /var/www/html/wp-content/themes/twentytwentyfive
+chmod -R 755 /var/www/html/wp-content/themes/twentytwentyfive
+
 # Install WP-CLI
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 chmod +x wp-cli.phar
